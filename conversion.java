@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.Math; 
 
 public class conversion {
 
@@ -20,6 +21,20 @@ public class conversion {
         return fathom * 1.852;
     }
 
+    private static double f_to_b(double b) {
+        double sqrt_5_13 = Math.sqrt(5.0 / 13.0);
+        if (b < 65) {
+            return 50.0 - 10.0 * sqrt_5_13 * Math.sqrt(65.0 - b);
+        }
+        else {
+            return 50.0 + 10.0 * sqrt_5_13 * Math.sqrt(b - 65.0);
+        }
+    }
+
+    private static double b_to_f(double f) {
+        return (7.0 / 500) * Math.abs(f - 50) * (f - 50) + 65;
+    }
+
     private static void updateComboBox(JComboBox<String> topbox, JComboBox<String> comboBox) {
         String selectedValue = (String) topbox.getSelectedItem();
         String[] units;
@@ -34,7 +49,9 @@ public class conversion {
                         "chain", "furlong", "mile", "league", "fathom", "cable", "nautical mile",
                         "link", "rod"};
                 break;
-            // Add more cases for other categories if needed
+            case "temperature":
+                units = new String[]{"Kelvin", "Fahrenheit", "Blaine"};
+                break;
             default:
                 units = new String[]{};
         }
@@ -236,6 +253,26 @@ public class conversion {
 
                         else
                             metres = 0.0;
+                    }
+
+                    else if ("temperature".equals(topValue[0])) {
+                        double oc;
+                        if ("Kelvin".equals(selectedValue)) {
+                            oc = u_value - 273.15;
+                        }
+
+                        else if ("Fahrenheit".equals(selectedValue)) {
+                            oc = (u_value - 32) * 5 / 9;
+                            
+                        }
+
+                        else if ("Blaine".equals(selectedValue)) {
+                            double of = b_to_f(u_value);
+                            oc = (of - 32) * 5 / 9;
+                        }
+                        else oc = 0.0;
+
+                        resultLabel.setText("Result: " + oc + " degrees Celsius");
                     }
                     
                 } catch (NumberFormatException ex) {
